@@ -65,7 +65,7 @@ class BarChart extends Component{
 			  }}
 			/>
 			</div>
-			)
+		)
 	}
 }
 

@@ -42,28 +42,6 @@ class Chart extends Component{
 	}
 
 
-	async componentDidMount(){
-    
-    // const url = 'https://api.data.gov/ed/collegescorecard/v1/schools/?school.operating=1&2015.academics.program_available.assoc_or_bachelors=true&2015.student.size__range=1..&school.degrees_awarded.predominant__range=1..3&school.degrees_awarded.highest__range=2..4&id=240444&api_key=7dDEjFQNdQgfnP3QTUbjPIXIkXfaRtQZT0DX0YX4';
-    // const response = await axios.get(url)
-    // var key = Object.keys(response.data.results[0].latest.academics.program_percentage)
-    // var colors = []
-    // var values = Object.values(response.data.results[0].latest.academics.program_percentage)
-    // for (var i = 0; i<key.length; i++){
-    // 	colors.push('#'+Math.floor(Math.random()*16777215).toString(16))
-    // }
-
-    // console.log(this.state)
-    // console.log()
-    // this.setState({
-    // 	labels: key,
-    // 	datasets: [{
-    //     data: values,
-    //     backgroundColor: colors,
-    // }]
-    // })
-   }
-
 	render(){
 		return(
 			<div className = "chart">
@@ -72,9 +50,10 @@ class Chart extends Component{
 			  	labels: this.state.labels,
 			  	datasets: this.state.datasets
 			  }}
-			  width={75}
-			  height={35}
-			  options={{ 
+			  width={1000}
+			  height={900}
+			  options={{
+			  	maintainAspectRatio:false, 
 			  	title : {
 			  		display:this.props.displayTitle,
 			  		text: this.props.name,

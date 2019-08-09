@@ -4,11 +4,13 @@ import './App.css';
 import axios from 'axios';
 import Chart from './components/Chart';
 import BarChart from './components/BarChart';
+import Export from './components/Export';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 class App extends Component{
-  constructor(){
-    super();
-    this.getKeys = this.getKeys.bind(this);
+  constructor(props){
+    super(props);
     this.state = {
       schoolData:[],
       totalStudent: '',
@@ -36,25 +38,49 @@ class App extends Component{
     window.localStorage.setItem('sat_scores', JSON.stringify(this.state.sat_scores));
 
   }
-  getKeys(){
-    return Object.keys(this.state.programPercentages);
+  getPdf(){
+    const input = document.getElementById('capture');
+    html2canvas(input).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF()
+      pdf.addImage(imgData, 'PNG', 0, 0);
+      pdf.save("download.pdf"); 
+
+    });
+
   }
 
-  // print() {
-  //   const filename  = 'ThisIsYourPDFFilename.pdf';
+  getData(){
+    // const {file} = this.state;
 
-  //   html2canvas(document.querySelector('#nodeToRenderAsPDF')).then(canvas => {
-  //     let pdf = new jsPDF('p', 'mm', 'a4');
-  //     pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 211, 298);
-  //     pdf.save(filename);
-  //   });
-  // }
+    var pdfConverter = require('jspdf');
+    //var converter = new pdfConverter();
+    //var doc = converter.jsPDF('p', 'pt');
+
+    var doc = new pdfConverter();
+
+    doc.setFontSize(20);
+    doc.text(20, 20, 'Page Data');
+    doc.setFontSize(15);
+    doc.text(20, 30, 'School Name: ' + this.state.schoolData.name );
+    doc.text(20, 40, 'School Website: ' + this.state.schoolData.school_url);
+    doc.text(20, 50, 'School City: ' + this.state.schoolData.city);
+    doc.text(20, 60, 'School State: ' + this.state.schoolData.state);
+    doc.text(20, 70, 'School Zip: ' + this.state.schoolData.zip);
+    doc.text(20, 80, 'Total number of Students: ' + this.state.totalStudent);
+    doc.text(20, 90, 'Program Percentages: ' + JSON.stringify(this.state.programPercentages));
+    doc.text(20, 100, 'Race Ethnicity: ' + JSON.stringify(this.state.raceEthnicity));
+    doc.text(20, 110, 'SAT Scores: ' + JSON.stringify(this.state.sat_scores));
+    doc.save("test.pdf");
+  }
+
+
+
   render(){
-    const {key} = this.state.programPercentages;
     return( 
     <React.Fragment>
 
-      <div className = "container-fluid">
+      <div className = "container-fluid" id="capture">
         <table className="table table-striped">
           <thead className="thead-dark">
             <tr>
@@ -79,16 +105,37 @@ class App extends Component{
         </table>
       </div>
       <div className = "container-fluid">
-        <Chart name={'Program Percentage'}/>
+        <table>
+          <tr className="row">
+            <div className = "container-fluid">
+            <Chart name={'Program Percentage'}/>
+            </div>
+          </tr>
+
+          <tr className="row">
+            <div className = "container-fluid">
+            <Chart name={'Race Ethnicity'}/>
+            </div>
+          </tr>
+
+          <tr className="row">
+            <div className = "container-fluid">
+            <BarChart name={'Sat Scores'}/>
+            </div>
+          </tr>
+        </table>
       </div>
-      <div className = "container-fluid">
-        <Chart name={'Race Ethnicity'}/>
-      </div>
-      <div className = "container-fluid">
-        <BarChart name={'Sat Scores'}/>
-      </div>
-      <div className = "container-fluid">
-        <a href="https://pdf-ace.com/pdfme/" target= "_blank">Save as PDF</a>
+      <div className="container-fluid">
+        <table>
+          <tr>
+          <td>
+            <button onClick={this.getPdf} className="btn btn-info">Save as PDF</button>
+          </td>
+          <td>
+            <button onClick={this.getData.bind(this)} className="btn btn-info">Save Page Data</button>
+          </td>
+          </tr>
+        </table>
       </div>
     </React.Fragment>
     );
