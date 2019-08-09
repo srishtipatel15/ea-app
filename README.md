@@ -12,3 +12,9 @@ Work under progress:
 1. A button to save the page as pdf
 2. A button to download the data that populated the page
 3. Few cosmetic changes
+
+Update:
+Now Completed:
+1. A button to save the page as pdf
+2. A button to download the data that populated the page
+3. Few cosmetic changes
