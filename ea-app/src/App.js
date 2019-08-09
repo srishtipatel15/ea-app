@@ -5,7 +5,7 @@ import axios from 'axios';
 import Chart from './components/Chart';
 import BarChart from './components/BarChart';
 import Export from './components/Export';
-import html2canvas from 'html2canvas';
+import domtoimage from 'dom-to-image';
 import jsPDF from 'jspdf';
 
 class App extends Component{
@@ -36,17 +36,17 @@ class App extends Component{
     window.localStorage.setItem('programPercentages', JSON.stringify(this.state.programPercentages));
     window.localStorage.setItem('raceEthnicity', JSON.stringify(this.state.raceEthnicity));
     window.localStorage.setItem('sat_scores', JSON.stringify(this.state.sat_scores));
-
   }
   getPdf(){
     const input = document.getElementById('capture');
-    html2canvas(input).then(canvas => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF()
-      pdf.addImage(imgData, 'PNG', 0, 0);
-      pdf.save("download.pdf"); 
-
-    });
+    const pdf = new jsPDF('landscape');
+            if (pdf) {
+              domtoimage.toPng(input)
+                .then(imgData => {
+                  pdf.addImage(imgData, 'PNG', 0, 0);
+                  pdf.save('download.pdf');
+                });
+            }
 
   }
 
@@ -57,7 +57,7 @@ class App extends Component{
     //var converter = new pdfConverter();
     //var doc = converter.jsPDF('p', 'pt');
 
-    var doc = new pdfConverter();
+    var doc = new pdfConverter('landscape');
 
     doc.setFontSize(20);
     doc.text(20, 20, 'Page Data');
@@ -79,51 +79,52 @@ class App extends Component{
   render(){
     return( 
     <React.Fragment>
-
-      <div className = "container-fluid" id="capture">
-        <table className="table table-striped">
-          <thead className="thead-dark">
-            <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Website</th>
-            <th scope="col">City</th>
-            <th scope="col">State</th>
-            <th scope="col">Zip</th>
-            <th scope="col">Number of Students</th>
-            </tr>
-          </thead>
-          <tbody>
+      <div id = 'capture'>
+        <div className = "container-fluid">
+          <table className="table table-striped">
+            <thead className="thead-dark">
               <tr>
-                <td> {this.state.schoolData.name}</td>
-                <td> <a href = {this.state.schoolData.school_url}>{this.state.schoolData.school_url} </a></td>
-                <td> {this.state.schoolData.city}</td>
-                <td> {this.state.schoolData.state}</td>
-                <td> {this.state.schoolData.zip}</td>
-                <td> {this.state.totalStudent}</td>
+              <th scope="col">Name</th>
+              <th scope="col">Website</th>
+              <th scope="col">City</th>
+              <th scope="col">State</th>
+              <th scope="col">Zip</th>
+              <th scope="col">Number of Students</th>
               </tr>
-          </tbody>
-        </table>
-      </div>
-      <div className = "container-fluid">
-        <table>
-          <tr className="row">
-            <div className = "container-fluid">
-            <Chart name={'Program Percentage'}/>
-            </div>
-          </tr>
+            </thead>
+            <tbody>
+                <tr>
+                  <td> {this.state.schoolData.name}</td>
+                  <td> <a href = {this.state.schoolData.school_url}>{this.state.schoolData.school_url} </a></td>
+                  <td> {this.state.schoolData.city}</td>
+                  <td> {this.state.schoolData.state}</td>
+                  <td> {this.state.schoolData.zip}</td>
+                  <td> {this.state.totalStudent}</td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+        <div className = "container-fluid">
+          <table>
+            <tr className="row">
+              <div className = "container-fluid">
+              <Chart name={'Program Percentage'}/>
+              </div>
+            </tr>
 
-          <tr className="row">
-            <div className = "container-fluid">
-            <Chart name={'Race Ethnicity'}/>
-            </div>
-          </tr>
+            <tr className="row">
+              <div className = "container-fluid">
+              <Chart name={'Race Ethnicity'}/>
+              </div>
+            </tr>
 
-          <tr className="row">
-            <div className = "container-fluid">
-            <BarChart name={'Sat Scores'}/>
-            </div>
-          </tr>
-        </table>
+            <tr className="row">
+              <div className = "container-fluid">
+              <BarChart name={'Sat Scores'}/>
+              </div>
+            </tr>
+          </table>
+        </div>
       </div>
       <div className="container-fluid">
         <table>
